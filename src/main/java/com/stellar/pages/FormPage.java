@@ -1,22 +1,9 @@
 package com.stellar.pages;
 
 import com.stellar.models.FormModel;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementClickInterceptedException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
-import java.util.NoSuchElementException;
 
 public class FormPage {
     private WebDriver driver;
@@ -33,51 +20,36 @@ public class FormPage {
         WebElement phoneInput = driver.findElement(By.id("phone"));
         WebElement messageInput = driver.findElement(By.id("message"));
 
+
         firstnameInput.sendKeys(formData.getFirstName());
         lastnameInput.sendKeys(formData.getLastName());
         emailInput.sendKeys(formData.getEmail());
         companyInput.sendKeys(formData.getCompany());
         phoneInput.sendKeys(formData.getPhone());
         messageInput.sendKeys(formData.getMessage());
-//        JavascriptExecutor js = (JavascriptExecutor) driver;
-//        WebElement button = driver.findElement(By.id("email"));
-//        js.executeScript("arguments[0].scrollIntoView();", button);
-//        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", driver.findElement(By.xpath("//button[@type='submit']")));
-        messageInput.sendKeys(Keys.PAGE_DOWN);
+        scrollToElement(By.xpath("//button[@type='submit']"));
         WebElement submitButton = driver.findElement(By.xpath("//button[@type='submit']"));
-//        Actions actions = new Actions(driver);
-//        Point point;
-//        point= submitButton.getLocation();
-//        actions.moveByOffset(point.getX(), point.getY());
-//       // actions.moveToElement(submitButton);
-//        actions.perform();
         submitButton.click();
-
-//        Wait<WebDriver> wait = new FluentWait<>(driver)
-//                .withTimeout(Duration.ofSeconds(5))
-//                .pollingEvery(Duration.ofSeconds(1))
-//                .ignoring(ElementClickInterceptedException.class);
-//        wait.until(ExpectedConditions.elementToBeClickable(submitButton)).click();
-//This is how we specify the condition to wait on.
-//This is what we will explore more in this chapter
-
-        //submitButton.click();
     }
 
     public String getSuccessfulMessage() {
-        WebElement res = new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//h2[contains(text(), 'Thanks')]"))));
-//        Wait<WebDriver> wait =
-//                new FluentWait<>(driver)
-//                        .withTimeout(Duration.ofSeconds(4))
-//                        .pollingEvery(Duration.ofMillis(300))
-//                        .ignoring(ElementNotInteractableException.class);
-//        wait.until(d -> driver.findElement(By.xpath("//h2[contains(text(), 'Thanks')]")).isDisplayed());
+        WebDriverWait wait = new WebDriverWait(driver, 20);
+        wait.until(ExpectedConditions.urlToBe("https://www.adkgroup.com/thank-you/"));
         WebElement successMessage = driver.findElement(By.xpath("//h2[contains(text(), 'Thanks')]"));
         return successMessage.getText();
     }
 
-    public String getCurrentUrl() {
-        String currentUrl = driver.getCurrentUrl();
-        return currentUrl;
+    public String getWrongFormatError(){
+        WebElement formatErrorMessage = driver.findElement(By.xpath("//span[text()='Incorrect format']"));
+        return formatErrorMessage.getText();
+    }
+
+    private void scrollToElement(By elementBy) {
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", driver.findElement(elementBy));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

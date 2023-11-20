@@ -26,11 +26,21 @@ public class FormTest {
     public void testFillAndSendForm() {
         driver.get("https://adkcw-wp.adkalpha.com/contact/");
         FormModel formData = new FormModel(
-                "John", "Doe", "john.doe@example.com", "company", "123456789", "hello");
+                "John", "Doe", "john.doe@example.com", "companyname", "123456789", "Test message");
         formPage.fillForm(formData);
-//        String succesfulMessage = formPage.getSuccessfulMessage();
-//        Assert.assertEquals("Thanks for throwing us a bone.", succesfulMessage);
-//        Assert.assertEquals("https://www.adkgroup.com/thank-you/", driver.getCurrentUrl());
+        String succesfulMessage = formPage.getSuccessfulMessage();
+        Assert.assertEquals("Thanks for throwing us a bone.", succesfulMessage);
+    }
+
+    @Test
+    public void testWrongEmailFormat(){
+        driver.get("https://adkcw-wp.adkalpha.com/contact/");
+        FormModel formData = new FormModel(
+                "John", "Doe", "john.doe.com", "companyname", "123456789", "Test message");
+        formPage.fillForm(formData);
+        String formatErrorMessage = formPage.getWrongFormatError();
+        Assert.assertEquals("Incorrect format",formatErrorMessage);
+
     }
 
     @After
